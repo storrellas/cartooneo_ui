@@ -6,61 +6,16 @@ import face from './assets/face.png'
 import tintin from './assets/tintin.png'
 import './App.css'
 import html2canvas from 'html2canvas';
-
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App() {
   const [count, setCount] = useState(0)
   const canvasRef = useRef(null);
   const [angle, setAngle] = useState(45)
-
-  const onDrawCanvas = async () => {
-
-
-
-    const ctx = canvasRef.current.getContext('2d');
-    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-    const img = new Image();
-    img.src = cartooneo; // Replace with your image URL
-
-    await new Promise((resolve, reject) => {
-    
-        img.onload = () => {
-          // ctxBackground.drawImage(img, 0, 0, 650, 450); // Draw image at position (50, 50)
-          resolve();
-        };
-    })
-
-
-
-    const imgFace = new Image();
-    imgFace.src = face; // Replace with your image URL
-
-    imgFace.onload = () => {
-      ctx.save()
-      ctx.drawImage(img, 0, 0, 650, 450); // Draw image at position (50, 50)
-      ctx.rotate(angle.current);  
-
-      // const x = (canvasRef.width - imgFace.width) / 2;
-      // const y = (canvas.height - imgFace.height) / 2;
-      ctx.drawImage(imgFace, 50, 60); // Draw image at position (50, 50)
-      ctx.restore()
-    };
-
-  }
-
-  useEffect(() => {
-
-    // onDrawCanvas()
-
-  },[])
-
-  const onTurn = () => {
-    setAngle(angle+30)
-    // console.log("onTurn")
-    // angle.current += 45 * Math.PI / 180; // 45 degrees in radians
-    // onDrawCanvas()
-  }
+  const [ position, setPosition ] = useState({ x: 0, y: 0 });
+  const [ file, setFile ] = useState(null);
+  const [ currentImage, setCurrentImage ] = useState(null);
+  const [ width, setWidth ] = useState(100);
 
   const onCapture = () => {
     const element = document.getElementById('capture-region');
@@ -78,16 +33,47 @@ function App() {
 
   }
 
-  return <div>
-      <div id="capture-region" style={{ width: '650px', height: '450px', position: 'relative'}}>
-        <img src={cartooneo} style={{ height: '100%'}}/>
-        <img src={face} style={{ position: 'absolute', top: '10px', left: '100px', transform: `rotate(${angle}deg)`, transition: 'all 0.5s ease'}}/>
+  const handleFileChange = (e) => {
+    for(const file of e.target.files) {
+      setCurrentImage(URL.createObjectURL(file))
+    }
+  };
 
-      </div>
 
-      <button onClick={() => onTurn()}>turn</button>
-      <button onClick={() => onCapture()}>Capture</button>
-  </div>
+  console.log("position ", position)
+  return <main className='d-flex'>
+            <div className='border rounded' id="capture-region" style={{ width: '650px', height: '450px', position: 'relative'}}>
+              <img src={cartooneo} style={{ height: '100%'}}/>
+              <img src={currentImage} 
+                style={{ position: 'absolute', top: `${position.y}px`, left: `${position.x}px`, 
+                  transform: `rotate(${angle}deg)`, transition: 'all 0.5s ease', width: `${width}px`}}/>
+            </div>
+            <div>
+              <div className='d-flex'>
+                <button className="btn btn-primary" onClick={() => setAngle(angle+30)}>TurnLeft</button>
+                <button className="btn btn-primary" onClick={() => setAngle(angle-30)  }>TurnRight</button>
+              </div>
+              <div className='d-flex mt-3'>
+                <button className="btn btn-primary" onClick={() => setPosition({...position, y: position.y-20})}>MoveUp</button>
+                <button className="btn btn-primary" onClick={() => setPosition({...position, y: position.y+20})}>MoveDown</button>
+              </div>
+              <div className='d-flex mt-3'>
+                <button className="btn btn-primary" onClick={() => setPosition({...position, x: position.x-20})}>MoveLeft</button>
+                <button className="btn btn-primary" onClick={() => setPosition({...position, x: position.x+20})}>MoveRight</button>
+              </div>
+              <div className='d-flex mt-3'>
+                <button className="btn btn-primary" onClick={() => setWidth(width+10)}>Increase</button>
+                <button className="btn btn-primary" onClick={() => setWidth(width-10)}>Reduce</button>
+              </div>
+              <div className='text-left mt-3'>
+                <button className="btn btn-primary" onClick={() => onCapture()}>Capture</button>
+              </div>
+              <div className='mt-3'>
+                <input className='form-control' type="file" onChange={handleFileChange} />
+              </div>
+            </div>
+
+        </main>
 
 }
 
