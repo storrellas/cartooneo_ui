@@ -41,7 +41,8 @@ function App() {
 
 
   console.log("position ", position)
-  return <main className='d-flex'>
+  return <main>
+          <div className='d-flex'>
             <div className='border rounded' id="capture-region" style={{ width: '650px', height: '450px', position: 'relative'}}>
               <img src={cartooneo} style={{ height: '100%'}}/>
               <img src={currentImage} 
@@ -72,6 +73,14 @@ function App() {
                 <input className='form-control' type="file" onChange={handleFileChange} />
               </div>
             </div>
+          </div>
+          {/* <svg className='border rounded' width="500" height="300" xmlns="http://www.w3.org/2000/svg">
+              <image href={cartooneo} width="500" height="300" />
+              <image href={currentImage} x={position.x} y={position.y} width={width}
+               style={{transition: 'all 0.5s ease'}}/>
+          </svg> */}
+
+
 
         </main>
 
