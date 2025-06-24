@@ -8,19 +8,17 @@ import './App.css'
 import html2canvas from 'html2canvas';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Draggable from 'react-draggable';
-
+import axios from 'axios';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 function App() {
-  const [count, setCount] = useState(0)
-  const canvasRef = useRef(null);
+
   const [angle, setAngle] = useState(45)
   const [ position, setPosition ] = useState({ x: 0, y: 0 });
   const [ file, setFile ] = useState(null);
   const [ currentImage, setCurrentImage ] = useState(null);
-  const [ width, setWidth ] = useState(100);
-  const nodeRef = useRef();
+  const [ height, setHeight ] = useState(50);
   const parentRef = useRef();
   const imgRef = useRef()
 
@@ -41,9 +39,27 @@ function App() {
 
   }
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     for(const file of e.target.files) {
       setCurrentImage(URL.createObjectURL(file))
+
+      // ------------------------
+
+      // const formData = new FormData();
+      // formData.append('file', file);
+      
+      // const response = await axios.post(`https://www.cutout.pro/api/v1/matting?mattingType=3&crop=true`, formData, {
+      //   headers: { 'Content-Type': 'multipart/form-data', 'APIKEY': 'XXXXX' },        
+      //   responseType: 'blob'        
+      // });
+      // const url = window.URL.createObjectURL(new Blob([response.data])) ;
+      // setCurrentImage(url)
+
+      // console.log("response ", response)
+
+
+      // ------------------------
+
     }
   };
 
@@ -72,7 +88,7 @@ function App() {
   const offset = useRef({ x: 0, y: 0 });
 
   const handleMouseDown = (e) => {
-    setDragging(true);
+      setDragging(true);
     const rect = e.target.getBoundingClientRect();
     offset.current = {
       x: e.clientX - rect.left,
@@ -109,7 +125,7 @@ function App() {
           
 
 
-            <div  
+            <div  id="capture-region"  
               ref={containerRef}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
@@ -129,10 +145,12 @@ function App() {
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}
                 // onDragEnd={handleMouseUp}
+                className='d-flex justify-content-center align-items-center'
                 style={{
                   width: "100px",
-                  height: "50px",
-                  backgroundColor: "blue",
+                  height: `${height}px`,
+                  // backgroundColor: "blue",
+                  transform: `rotate(${angle}deg)`, 
                   position: "absolute",
                   left: position.x,
                   top: position.y,
@@ -150,8 +168,8 @@ function App() {
           
             <div>
               <div className='d-flex'>
-                <button className="btn btn-primary" onClick={() => setAngle(angle+30)}>TurnLeft</button>
-                <button className="btn btn-primary" onClick={() => setAngle(angle-30)  }>TurnRight</button>
+                <button className="btn btn-primary" onClick={() => setAngle(angle-30)}>TurnLeft</button>
+                <button className="btn btn-primary" onClick={() => setAngle(angle+30)  }>TurnRight</button>
               </div>
               <div className='d-flex mt-3'>
                 <button className="btn btn-primary" onClick={() => setPosition({...position, y: position.y-20})}>MoveUp</button>
@@ -162,8 +180,8 @@ function App() {
                 <button className="btn btn-primary" onClick={() => setPosition({...position, x: position.x+20})}>MoveRight</button>
               </div>
               <div className='d-flex mt-3'>
-                <button className="btn btn-primary" onClick={() => setWidth(width+10)}>Increase</button>
-                <button className="btn btn-primary" onClick={() => setWidth(width-10)}>Reduce</button>
+                <button className="btn btn-primary" onClick={() => setHeight(height+10)}>Increase</button>
+                <button className="btn btn-primary" onClick={() => setHeight(height-10)}>Reduce</button>
               </div>
               <div className='text-left mt-3'>
                 <button className="btn btn-primary" onClick={() => onCapture()}>Capture</button>
@@ -173,26 +191,7 @@ function App() {
               </div>
             </div>
           </div>
-          {/* <svg className='border rounded' width="500" height="300" xmlns="http://www.w3.org/2000/svg">
-              <image href={cartooneo} width="500" height="300" />
-              <image href={currentImage} x={position.x} y={position.y} width={width}
-               style={{transition: 'all 0.5s ease'}}/>
-          </svg> */}
 
-
-<div ref={parentRef} className='border rounded' id="capture-region" 
-              style={{ width: '650px', height: '450px', position: 'relative'}}>
-              <img src={cartooneo} style={{ height: '100%'}}/>
-              
-              {/* <img src={currentImage}
-                  style={{ position: 'absolute', top: `${position.y}px`, left: `${position.x}px`, 
-                    transform: `rotate(${angle}deg)`, transition: 'all 0.5s ease', width: `${width}px`}}/> */}
-
-              <img draggable="true" src={face} ref={nodeRef} 
-                style={{ position: 'absolute', top: position.y, left: position.x}}
-                onDrag={(e) => onDrag(e)}/>
-
-            </div>
 
 
         </main>
