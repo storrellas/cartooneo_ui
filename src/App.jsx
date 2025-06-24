@@ -19,7 +19,6 @@ function App() {
   const [ file, setFile ] = useState(null);
   const [ currentImage, setCurrentImage ] = useState(null);
   const [ height, setHeight ] = useState(50);
-  const nodeRef = useRef();
   const parentRef = useRef();
   const imgRef = useRef()
 
@@ -50,10 +49,10 @@ function App() {
       formData.append('file', file);
       
       const response = await axios.post(`https://www.cutout.pro/api/v1/matting?mattingType=3&crop=true`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data', 'APIKEY': '46e01093494f4fd2858b3623b48da5f0' },        
+        headers: { 'Content-Type': 'multipart/form-data', 'APIKEY': 'XXXXX' },        
         responseType: 'blob'        
       });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(new Blob([response.data])) ;
       setCurrentImage(url)
 
       console.log("response ", response)
